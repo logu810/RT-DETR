@@ -1,14 +1,14 @@
 task: detection
 
-num_classes: 80
-remap_mscoco_category: True
+num_classes: 10
+remap_mscoco_category: False
 
 train_dataloader: 
   type: DataLoader
   dataset: 
     type: CocoDetection
-    img_folder: /kaggle/working/fruit-vision-classification-1/train/
-    ann_file: /kaggle/working/fruit-vision-classification-1/train/_annotations.coco.json
+    img_folder: /kaggle/working/fruit-vision-classification-2/train/
+    ann_file: /kaggle/working/fruit-vision-classification-2/train/_annotations.coco.json
     transforms:
       type: Compose
       ops: ~
@@ -22,8 +22,8 @@ val_dataloader:
   type: DataLoader
   dataset: 
     type: CocoDetection
-    img_folder: /kaggle/working/fruit-vision-classification-1/valid/
-    ann_file: /kaggle/working/fruit-vision-classification-1/valid/_annotations.coco.json
+    img_folder: /kaggle/working/fruit-vision-classification-2/valid/
+    ann_file: /kaggle/working/fruit-vision-classification-2/valid/_annotations.coco.json
     transforms:
       type: Compose
       ops: ~ 
