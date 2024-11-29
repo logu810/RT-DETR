@@ -7,7 +7,8 @@ from src.data.coco.coco_dataset import mscoco_category2name, mscoco_category2lab
 # print(onnx.helper.printable_graph(mm.graph))
 
 # Load the original image without resizing
-original_im = Image.open('./hongkong.jpg').convert('RGB')
+img_path = input("Enter Image path: ")
+original_im = Image.open(img_path).convert('RGB')
 original_size = original_im.size
 
 # Resize the image for model input
