@@ -2,7 +2,8 @@ import onnxruntime as ort
 from PIL import Image, ImageDraw, ImageFont
 from torchvision.transforms import ToTensor
 from src.data.coco.coco_dataset import mscoco_category2name, mscoco_category2label, mscoco_label2category
-
+import torch
+import torch.nn as nn 
 
 size = torch.tensor([[640, 640]])
 # print(onnx.helper.printable_graph(mm.graph))
