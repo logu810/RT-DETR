@@ -73,7 +73,7 @@ CONFIG = {
     },
     'rtdetr_r50vd': {
         'config': ROOT / 'configs/rtdetr/rtdetr_r50vd_6x_coco.yml',
-        'resume': 'https://github.com/lyuwenyu/storage/releases/download/v0.1/rtdetr_r50vd_6x_coco_from_paddle.pth',
+        'resume': '/kaggle/working/RT-DETR/rtdetr_pytorch/output/rtdetr_r50vd_6x_coco/checkpoint0027.pth',
     },
     'rtdetr_r101vd': {
         'config': ROOT / 'configs/rtdetr/rtdetr_r101vd_6x_coco.yml',
