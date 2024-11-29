@@ -4,6 +4,14 @@ from torchvision.transforms import ToTensor
 from src.data.coco.coco_dataset import mscoco_category2name, mscoco_category2label, mscoco_label2category
 import torch
 import torch.nn as nn 
+import os 
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+
+import argparse
+import numpy as np 
+
+from src.core import YAMLConfig
 
 size = torch.tensor([[640, 640]])
 # print(onnx.helper.printable_graph(mm.graph))
