@@ -26,7 +26,7 @@ im = original_im.resize((640, 640))
 im_data = ToTensor()(im)[None]
 print(im_data.shape)
 
-sess = ort.InferenceSession("/kaggle/working/RT-DETR/rtdetr_pytorch/models/model.onnx")
+sess = ort.InferenceSession("/kaggle/working/RT-DETR_backbone/rtdetr_pytorch/models/model.onnx")
 output = sess.run(
     # output_names=['labels', 'boxes', 'scores'],
     output_names=None,
