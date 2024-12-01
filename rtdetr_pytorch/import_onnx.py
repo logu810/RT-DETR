@@ -53,7 +53,7 @@ for i in range(im_data.shape[0]):
         # Scale the bounding boxes back to the original image size
         b = [coord * original_size[j % 2] / 640 for j, coord in enumerate(b)]
         # Get the category name from the label
-        category_name = mscoco_category2name[mscoco_label2category[l]]
+        category_name = mscoco_category2name[mscoco_label2category[l]-1]
         draw.rectangle(list(b), outline='red', width=2)
         font = ImageFont.load_default()  
         draw.text((b[0], b[1]), text=category_name, fill='yellow', font=font)
