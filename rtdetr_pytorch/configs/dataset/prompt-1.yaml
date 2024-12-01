@@ -1,0 +1,184 @@
+rtdetr_pytorch/configs/rtdetr/include/dataloader_regnet.yml
+
+# num_classes: 91
+# remap_mscoco_category: True
+
+train_dataloader: 
+  dataset: 
+    return_masks: False
+    transforms:
+      ops:
+        - {type: RandomPhotometricDistort, p: 0.5}
+        - {type: RandomZoomOut, fill: 0}
+        - {type: RandomIoUCrop, p: 0.8}
+        - {type: SanitizeBoundingBox, min_size: 1}
+        - {type: RandomHorizontalFlip}
+        - {type: Resize, size: [640, 640], }
+        # - {type: Resize, size: 639, max_size: 640}
+        # - {type: PadToSize, spatial_size: 640}
+        - {type: ToImageTensor}
+        - {type: ConvertDtype}
+        - {type: SanitizeBoundingBox, min_size: 1}
+        - {type: ConvertBox, out_fmt: 'cxcywh', normalize: True}
+  shuffle: True
+  batch_size: 8
+  num_workers: 2
+  collate_fn: default_collate_fn
+
+
+val_dataloader:
+  dataset: 
+    transforms:
+      ops: 
+        # - {type: Resize, size: 639, max_size: 640}
+        # - {type: PadToSize, spatial_size: 640}
+        - {type: Resize, size: [640, 640]}
+        - {type: ToImageTensor}
+        - {type: ConvertDtype}
+  shuffle: False
+  batch_size: 8
+  num_workers: 2
+  collate_fn: default_collate_fn
+
+
+  rtdetr_pytorch/configs/rtdetr/include/optimizer_regnet.yml
+
+
+
+use_ema: True 
+ema:
+  type: ModelEMA
+  decay: 0.9999
+  warmups: 2000
+
+
+find_unused_parameters: True 
+
+epoches: 72
+clip_max_norm: 0.1
+
+optimizer:
+  type: AdamW
+  params: 
+    - 
+      params: '^(?=.*encoder(?=.*bias|.*norm.*weight)).*$'
+      weight_decay: 0.
+    -
+      params: '^(?=.*decoder(?=.*bias|.*norm.*weight)).*$'
+      weight_decay: 0.
+
+  lr: 0.0001
+  betas: [0.9, 0.999]
+  weight_decay: 0.0001
+
+
+lr_scheduler:
+  type: MultiStepLR
+  milestones: [1000]
+  gamma: 0.1
+
+  rtdetr_pytorch/configs/rtdetr/include/rtdetr_regnet.yml
+
+  task: detection
+
+model: RTDETR
+criterion: SetCriterion
+postprocessor: RTDETRPostProcessor
+
+
+RTDETR: 
+  backbone: RegNet
+  encoder: HybridEncoder
+  decoder: RTDETRTransformer
+  multi_scale: [480, 512, 544, 576, 608, 640, 640, 640, 672, 704, 736, 768, 800]
+
+
+RegNet:
+  return_idx: [1, 2, 3]
+  configuration: RegNetConfig()
+
+HybridEncoder:
+  in_channels: [192, 512, 1088]
+  feat_strides: [8, 16, 32]
+
+  # intra
+  hidden_dim: 256
+  use_encoder_idx: [2]
+  num_encoder_layers: 1
+  nhead: 8
+  dim_feedforward: 1024
+  dropout: 0.
+  enc_act: 'gelu'
+  pe_temperature: 10000
+  
+  # cross
+  expansion: 1.0
+  depth_mult: 1
+  act: 'silu'
+
+  # eval
+  eval_spatial_size: [640, 640]
+
+
+RTDETRTransformer:
+  feat_channels: [256, 256, 256]
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  num_levels: 3
+
+  num_queries: 300
+
+  num_decoder_layers: 6
+  num_denoising: 100
+  
+  eval_idx: -1
+  eval_spatial_size: [640, 640]
+
+
+use_focal_loss: True
+
+RTDETRPostProcessor:
+  num_top_queries: 300
+
+
+SetCriterion:
+  weight_dict: {loss_vfl: 1, loss_bbox: 5, loss_giou: 2,}
+  losses: ['vfl', 'boxes', ]
+  alpha: 0.75
+  gamma: 2.0
+
+  matcher:
+    type: HungarianMatcher
+    weight_dict: {cost_class: 2, cost_bbox: 5, cost_giou: 2}
+    # use_focal_loss: True 
+    alpha: 0.25
+    gamma: 2.0
+
+
+rtdetr_pytorch/src/nn/backbone/regnet.py
+
+import torch
+import torch.nn as nn 
+from transformers import RegNetModel
+
+
+from src.core import register
+
+__all__ = ['RegNet']
+
+@register
+class RegNet(nn.Module):
+    def __init__(self, configuration, return_idx=[0, 1, 2, 3]):
+        super(RegNet, self).__init__()  
+        self.model = RegNetModel.from_pretrained("facebook/regnet-y-040")
+        self.return_idx = return_idx
+
+
+    def forward(self, x):
+        
+        outputs = self.model(x, output_hidden_states = True)
+        x = outputs.hidden_states[2:5]
+
+        return x
+
+        
