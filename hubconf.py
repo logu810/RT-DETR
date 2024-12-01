@@ -73,7 +73,7 @@ CONFIG = {
     },
     'rtdetr_r50vd': {
         'config': ROOT / 'configs/rtdetr/rtdetr_r50vd_6x_coco.yml',
-        'resume': '/kaggle/working/RT-DETR_backbone/rtdetr_pytorch/output/rtdetr_r50vd_6x_coco/checkpoint0027.pth',
+        'resume': '/kaggle/working/RT-DETR/rtdetr_pytorch/output/rtdetr_r50vd_6x_coco/checkpoint0027.pth',
     },
     'rtdetr_r101vd': {
         'config': ROOT / 'configs/rtdetr/rtdetr_r101vd_6x_coco.yml',
