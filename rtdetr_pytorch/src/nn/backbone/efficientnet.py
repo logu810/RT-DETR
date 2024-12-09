@@ -14,7 +14,7 @@ class EfficientNet(nn.Module):
         self.model = EfficientNetModel.from_pretrained("google/efficientnet-b7")
         self.return_idx = return_idx
 
-        # Map EfficientNet output channels to HybridEncoder input channels
+        # #Map EfficientNet output channels to HybridEncoder input channels
         self.channel_mapper = nn.ModuleList([
             nn.Conv2d(in_channels, out_channels, kernel_size=1)
             for in_channels, out_channels in zip([32, 48, 136], [192, 512, 1088])
