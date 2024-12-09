@@ -4,74 +4,74 @@ model: RTDETR
 criterion: SetCriterion
 postprocessor: RTDETRPostProcessor
 
+
 RTDETR: 
   backbone: EfficientNet
   encoder: HybridEncoder
   decoder: RTDETRTransformer
   multi_scale: [480, 512, 544, 576, 608, 640, 640, 640, 672, 704, 736, 768, 800]
 
+
 EfficientNet:
-  return_idx: [1, 2, 3]            # Ensure these correspond to layers that match in_channels for HybridEncoder
-  configuration:
-    hidden_size: 1280              # Match the output size of EfficientNet last hidden layer
-    in_channels: 3                 # RGB image input (3 channels)
-    out_channels: [192, 512, 1088] # Ensure alignment with HybridEncoder in_channels
+  return_idx: [1, 2, 3]
+  configuration: EfficientNetConfig()
 
 HybridEncoder:
-  in_channels: [192, 512, 1088]    # Match the outputs of the EfficientNet backbone
-  feat_strides: [8, 16, 32]        # Standard stride levels for feature maps
+  in_channels: [160, 224, 384]
+  feat_strides: [8, 16, 32]
 
-  # Intra encoder settings
+  # intra
   hidden_dim: 256
-  use_encoder_idx: [2]             # Use output feature map at index 2 for further encoding
+  use_encoder_idx: [2]
   num_encoder_layers: 1
-  nhead: 8                         # Number of attention heads in transformer
-  dim_feedforward: 1024            # Feedforward dimension
-  dropout: 0.0
+  nhead: 8
+  dim_feedforward: 1024
+  dropout: 0.
   enc_act: 'gelu'
   pe_temperature: 10000
   
-  # Cross encoder settings
+  # cross
   expansion: 1.0
   depth_mult: 1
   act: 'silu'
 
-  # Evaluation settings
-  eval_spatial_size: [640, 640]    # Fixed spatial size for evaluation
+  # eval
+  eval_spatial_size: [640, 640]
+
 
 RTDETRTransformer:
-  feat_channels: [256, 256, 256]   # Hidden dimensions of feature maps for the transformer
-  feat_strides: [8, 16, 32]        # Stride levels must align with HybridEncoder strides
+  feat_channels: [256, 256, 256]
+  feat_strides: [8, 16, 32]
   hidden_dim: 256
-  num_levels: 3                    # Number of feature levels used in the transformer
+  num_levels: 3
 
-  num_queries: 300                 # Number of queries for object detection
+  num_queries: 300
 
   num_decoder_layers: 6
   num_denoising: 100
   
   eval_idx: -1
-  eval_spatial_size: [640, 640]    # Fixed spatial size for evaluation
+  eval_spatial_size: [640, 640]
 
-use_focal_loss: True               # Use focal loss for training
+
+use_focal_loss: True
 
 RTDETRPostProcessor:
-  num_top_queries: 300             # Top queries to process during inference
+  num_top_queries: 300
+
 
 SetCriterion:
-  weight_dict: 
-    loss_vfl: 1                    # Weight for focal loss
-    loss_bbox: 5                   # Weight for bounding box loss
-    loss_giou: 2                   # Weight for GIoU loss
-  losses: ['vfl', 'boxes']         # Define loss components
-  alpha: 0.75                      # Focal loss alpha parameter
-  gamma: 2.0                       # Focal loss gamma parameter
+  weight_dict: {loss_vfl: 1, loss_bbox: 5, loss_giou: 2,}
+  losses: ['vfl', 'boxes', ]
+  alpha: 0.75
+  gamma: 2.0
 
   matcher:
-    type: HungarianMatcher         # Use Hungarian matching algorithm
-    weight_dict: 
-      cost_class: 2                # Weight for classification cost in matcher
-      cost_bbox: 5                 # Weight for bounding box cost in matcher
-      cost_giou: 2                 # Weight for GIoU cost in matcher
-    alpha: 0.25                    # Matcher alpha parameter
-    gamma: 2.0                     # Matcher gamma parameter
+    type: HungarianMatcher
+    weight_dict: {cost_class: 2, cost_bbox: 5, cost_giou: 2}
+    # use_focal_loss: True 
+    alpha: 0.25
+    gamma: 2.0
+
+
+

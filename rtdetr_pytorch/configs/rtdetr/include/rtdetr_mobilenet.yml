@@ -17,7 +17,7 @@ MobileNet:
   configuration: MobileNetConfig()
 
 HybridEncoder:
-  in_channels: [192, 512, 1088]
+  in_channels: [32, 32, 32]
   feat_strides: [8, 16, 32]
 
   # intra
