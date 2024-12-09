@@ -14,7 +14,7 @@ class EfficientNet(nn.Module):
         self.model = EfficientNetModel.from_pretrained("google/efficientnet-b7")
         self.return_idx = return_idx
 
-        # Add 1x1 convolutions to align output channels
+        # Map EfficientNet output channels to HybridEncoder input channels
         self.channel_mapper = nn.ModuleList([
             nn.Conv2d(in_channels, out_channels, kernel_size=1)
             for in_channels, out_channels in zip([32, 48, 136], [192, 512, 1088])
@@ -24,6 +24,12 @@ class EfficientNet(nn.Module):
         outputs = self.model(x, output_hidden_states=True)
         features = [outputs.hidden_states[i] for i in self.return_idx]
 
+        # Debug: Print shapes before mapping
+        print("Before mapping:", [feature.shape for feature in features])
+
         # Map features to the correct channels
         features = [self.channel_mapper[i](feature) for i, feature in enumerate(features)]
+
+        # Debug: Print shapes after mapping
+        print("After mapping:", [feature.shape for feature in features])
         return features
