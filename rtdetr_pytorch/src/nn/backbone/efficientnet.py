@@ -11,7 +11,7 @@ __all__ = ['EfficientNet']
 class EfficientNet(nn.Module):
     def __init__(self, configuration, return_idx=[0, 1, 2, 3]):
         super(EfficientNet, self).__init__()  
-        self.model = EfficientNetModel.from_pretrained("google/efficientnet-b7")
+        self.model = EfficientNetModel.from_pretrained("google/efficientnet-b7", in_channels=32)
         self.return_idx = return_idx
 
 
