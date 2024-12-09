@@ -20,16 +20,16 @@ class EfficientNet(nn.Module):
             for in_channels, out_channels in zip([32, 48, 136], [192, 512, 1088])
         ])
 
+
     def forward(self, x):
         outputs = self.model(x, output_hidden_states=True)
         features = [outputs.hidden_states[i] for i in self.return_idx]
 
-        # Debug: Print shapes before mapping
-        print("Before mapping:", [feature.shape for feature in features])
-
-        # Map features to the correct channels
+        # Debug: Print shapes of features before mapping
+        print("EfficientNet feature shapes before mapping:")
+        for i, feature in enumerate(features):
+            print(f"Feature {i}: {feature.shape}")
+        
         features = [self.channel_mapper[i](feature) for i, feature in enumerate(features)]
-
-        # Debug: Print shapes after mapping
-        print("After mapping:", [feature.shape for feature in features])
         return features
+
