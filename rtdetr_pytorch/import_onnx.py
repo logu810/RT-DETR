@@ -56,7 +56,7 @@ for i in range(im_data.shape[0]):
         category_name = mscoco_category2name[mscoco_label2category[l-1]]
         draw.rectangle(list(b), outline='red', width=2)
         font = ImageFont.load_default()  
-        draw.text((b[0], b[1]), text=category_name, fill='yellow', font=font)
+        draw.text((b[0], b[1]), text=category_name, fill='blue', font=font)
 
 # Save the original image with bounding boxes
 original_im.save('test.jpg')
