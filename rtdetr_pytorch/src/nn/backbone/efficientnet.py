@@ -7,6 +7,7 @@ from src.core import register
 
 __all__ = ['EfficientNet']
 
+@register
 class EfficientNet(nn.Module):
     def __init__(self, configuration, return_idx=[1, 2, 3]):
         super(EfficientNet, self).__init__()
