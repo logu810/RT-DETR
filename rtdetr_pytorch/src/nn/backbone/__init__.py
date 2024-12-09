@@ -5,3 +5,4 @@ from .regnet import *
 from .common import *
 from .dla import *
 from .efficientnet import *
+from .mobilenet import *
